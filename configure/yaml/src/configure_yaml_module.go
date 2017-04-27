@@ -33,7 +33,9 @@ func (yc *YamlConfigure) Init(option *Option) int {
     }
 
     if format := item.(string);
-       format != "yaml" || format != "yml" {
+       format == "yaml" || format == "yml" {
+        /* Ok */
+    } else {
         return Ignore
     }
 

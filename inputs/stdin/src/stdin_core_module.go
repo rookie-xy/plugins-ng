@@ -64,7 +64,7 @@ func (r *StdinContext) Contexts() *Context {
 var (
     status = String{ len("status"), "status" }
     channel = String{ len("channel"), "channel" }
-    stdin Stdin
+    mystdin Stdin
 )
 
 var stdinCommands = []Command{
@@ -73,20 +73,37 @@ var stdinCommands = []Command{
       STDIN_CONFIG|CONFIG_VALUE,
       SetFlag,
       0,
-      unsafe.Offsetof(stdin.status),
+      unsafe.Offsetof(mystdin.status),
       nil },
 
     { channel,
       STDIN_CONFIG|CONFIG_VALUE,
       SetString,
       0,
-      unsafe.Offsetof(stdin.channel),
+      unsafe.Offsetof(mystdin.channel),
       nil },
 
     NilCommand,
 }
 
 func (r *Stdin) Init(o *Option) int {
+    ctx := r.Context.Contexts()
+    fmt.Println(len(ctx.Data))
+
+    for _, v := range ctx.GetDatas() {
+        if v != nil {
+            this := (*Stdin)(unsafe.Pointer(uintptr(*v)))
+            if this == nil {
+                fmt.Println("stdin context")
+                return Error
+            }
+
+            fmt.Println(this.channel)
+        } else {
+            break
+        }
+    }
+
     fmt.Println("Stdin init")
     return Ok
 }

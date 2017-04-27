@@ -4,7 +4,9 @@
 
 package simple
 
-import . "github.com/rookie-xy/main/types"
+import (
+    . "github.com/rookie-xy/main/types"
+)
 
 type SimpleOption struct {
     *Module
@@ -58,10 +60,11 @@ func (r *SimpleOption) Init(o *Option) int {
         default:
             o.SetItem("invaild", "")
             o.Info("not found any option")
-            //o.result["error"] = "not found any option"
             break
         }
     }
+
+    o.Configure = NewConfigure(o.Log)
 
     return Ok
 }

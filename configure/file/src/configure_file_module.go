@@ -93,7 +93,6 @@ func (fc *FileConfigure) Clear() {
 }
 
 func (fc *FileConfigure) Init(option *Option) int {
-    fmt.Println("file configure")
     if c := option.Configure; c != nil {
         fc.Configure = c
     } else {

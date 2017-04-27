@@ -64,10 +64,10 @@ func (r *InputStdinContext) Contexts() *Context {
 }
 */
 
-var stdinInput = String{ len("stdin_input"), "stdin_input" }
+var stdin = String{ len("stdin"), "stdin" }
 var inputStdinCommands = []Command{
 
-    { stdinInput,
+    { stdin,
       STDIN_CONFIG,
       stdinBlock,
       0,
@@ -92,7 +92,6 @@ var inputStdinModule = &InputStdin{
     Module: &Module{
         MODULE_V1,
         CONTEXT_V1,
-        //inputStdinContext,
         nil,
         inputStdinCommands,
         INPUT_MODULE,
