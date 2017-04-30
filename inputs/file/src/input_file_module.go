@@ -20,9 +20,6 @@ type InputFile struct {
      pattern  string
 }
 
-type MyFile struct {
-}
-
 func NewInputFile() *InputFile {
     return &InputFile{}
 }

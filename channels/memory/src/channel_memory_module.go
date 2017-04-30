@@ -6,57 +6,116 @@ package memory
 
 import (
       "unsafe"
-    . "github.com/rookie-xy/worker/types"
-    . "github.com/rookie-xy/worker/modules"
+    . "github.com/rookie-xy/main/types"
+"fmt"
 )
 
-const (
-    MEMORY_MODULE = CHANNEL_MODULE|0x01000000
-    MEMORY_CONFIG = USER_CONFIG|CONFIG_ARRAY
-)
+type ChannelMemory struct {
+    *Module
 
-var memoryModule = String{ len("memory_module"), "memory_module" }
-var channelMemoryContext = &Context{
-    memoryModule,
-    nil,
-    nil,
+     name     string
+     size     int
 }
 
-var	memory = String{ len("memory"), "memory" }
+func NewChannelMemory() *ChannelMemory {
+    return &ChannelMemory{}
+}
+
+type ChannelMemoryContext struct {
+    *Context
+}
+
+var memoryChannel = String{ len("memory_channel"), "memory_channel" }
+var channelMemoryContext = &ChannelMemoryContext{
+    Context: &Context{
+        Name: memoryChannel,
+    },
+}
+
+func (r *ChannelMemoryContext) Create() unsafe.Pointer {
+    memory := NewChannelMemory()
+    if memory == nil {
+        return nil
+    }
+
+    memory.name = "channel name"
+    memory.size = 1024
+
+    return unsafe.Pointer(memory)
+}
+
+func (r *ChannelMemoryContext) Contexts() *Context {
+    return r.Get()
+}
+
+var (
+    name = String{ len("name"), "name" }
+    size = String{ len("size"), "size" }
+    channelMemory ChannelMemory
+)
+
 var channelMemoryCommands = []Command{
 
-    { memory,
-      MEMORY_CONFIG,
-      memoryBlock,
+    { name,
+      MEMORY_CONFIG|CONFIG_VALUE,
+      SetString,
       0,
+      unsafe.Offsetof(channelMemory.name),
+      nil },
+
+    { size,
+      MEMORY_CONFIG|CONFIG_VALUE,
+      SetNumber,
       0,
+      unsafe.Offsetof(channelMemory.size),
       nil },
 
     NilCommand,
 }
 
-func memoryBlock(cycle *Cycle, _ *Command, _ *unsafe.Pointer) int {
-    if nil == cycle {
-        return Error
-    }
+var channelMemoryModule = &ChannelMemory{
+    Module: &Module{
+        MODULE_V1,
+        CONTEXT_V1,
+        channelMemoryContext,
+        channelMemoryCommands,
+        MEMORY_MODULE,
+    },
+}
 
-    flag := MEMORY_CONFIG|CONFIG_VALUE
-    cycle.Block(cycle, MEMORY_MODULE, flag)
+func (r *ChannelMemory) Init(o *Option) int {
+    context := r.Context.Contexts()
+
+    for _, v := range context.Data {
+        if v != nil {
+            this := (*ChannelMemory)(unsafe.Pointer(uintptr(*v)))
+            if this == nil {
+                return Error
+            }
+
+            fmt.Println(this.name, this.size)
+        } else {
+            break
+        }
+    }
 
     return Ok
 }
 
-var channelMemoryModule = Module{
-    MODULE_V1,
-    CONTEXT_V1,
-    unsafe.Pointer(channelMemoryContext),
-    channelMemoryCommands,
-    CHANNEL_MODULE,
-    nil,
-    nil,
-    nil,
+func (r *ChannelMemory) Main(cfg *Configure) int {
+    fmt.Println("Memory main")
+    return Ok
+}
+
+func (r *ChannelMemory) Exit() int {
+    fmt.Println("Memory exit")
+    return Ok
+}
+
+func (r *ChannelMemory) Type() *Module {
+    return r.Self()
 }
 
 func init() {
-    Modules = Load(Modules, &channelMemoryModule)
+    Modulers = Load(Modulers, channelMemoryModule)
 }

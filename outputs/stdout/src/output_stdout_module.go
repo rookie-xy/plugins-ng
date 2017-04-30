@@ -6,57 +6,116 @@ package stdout
 
 import (
       "unsafe"
-    . "github.com/rookie-xy/worker/types"
-    . "github.com/rookie-xy/worker/modules"
+    . "github.com/rookie-xy/main/types"
+"fmt"
 )
 
-const (
-    STDOUT_MODULE = OUTPUT_MODULE|0x01000000
-    STDOUT_CONFIG = USER_CONFIG|CONFIG_ARRAY
-)
+type OutputStdout struct {
+    *Module
 
-var stdoutModule = String{ len("stdout_module"), "stdout_module" }
-var outputStdoutContext = &Context{
-    stdoutModule,
-    nil,
-    nil,
+     status   bool
+     channel  string
 }
 
-var stdout = String{ len("stdout"), "stdout" }
+func NewOutputStdout() *OutputStdout {
+    return &OutputStdout{}
+}
+
+type OutputStdoutContext struct {
+    *Context
+}
+
+var stdoutOutput = String{ len("stdout_output"), "stdout_output" }
+var outputStdoutContext = &OutputStdoutContext{
+    Context: &Context{
+        Name: stdoutOutput,
+    },
+}
+
+func (r *OutputStdoutContext) Create() unsafe.Pointer {
+    stdout := NewOutputStdout()
+    if stdout == nil {
+        return nil
+    }
+
+    stdout.channel = "zhang yue"
+    stdout.status = false
+
+    return unsafe.Pointer(stdout)
+}
+
+func (r *OutputStdoutContext) Contexts() *Context {
+    return r.Get()
+}
+
+var (
+    stdoutStatus = String{ len("status"), "status" }
+    stdoutChannel = String{ len("channel"), "channel" }
+    outputStdout OutputStdout
+)
+
 var outputStdoutCommands = []Command{
 
-    { stdout,
-      STDOUT_CONFIG,
-      stdoutBlock,
+    { stdoutStatus,
+      STDOUT_CONFIG|CONFIG_VALUE,
+      SetFlag,
       0,
+      unsafe.Offsetof(outputStdout.status),
+      nil },
+
+    { stdoutChannel,
+      STDOUT_CONFIG|CONFIG_VALUE,
+      SetString,
       0,
+      unsafe.Offsetof(outputStdout.channel),
       nil },
 
     NilCommand,
 }
 
-func stdoutBlock(cycle *Cycle, _ *Command, _ *unsafe.Pointer) int {
-    if nil == cycle {
-        return Error
-    }
+var outputStdoutModule = &OutputStdout{
+    Module: &Module{
+        MODULE_V1,
+        CONTEXT_V1,
+        outputStdoutContext,
+        outputStdoutCommands,
+        STDOUT_MODULE,
+    },
+}
 
-    flag := STDOUT_CONFIG|CONFIG_VALUE
-    cycle.Block(cycle, STDOUT_MODULE, flag)
+func (r *OutputStdout) Init(o *Option) int {
+    context := r.Context.Contexts()
+
+    for _, v := range context.Data {
+        if v != nil {
+            this := (*OutputStdout)(unsafe.Pointer(uintptr(*v)))
+            if this == nil {
+                return Error
+            }
+
+            fmt.Println(this.channel, this.status)
+        } else {
+            break
+        }
+    }
 
     return Ok
 }
 
-var outputStdoutModule = Module{
-    MODULE_V1,
-    CONTEXT_V1,
-    unsafe.Pointer(outputStdoutContext),
-    outputStdoutCommands,
-    OUTPUT_MODULE,
-    nil,
-    nil,
-    nil,
+func (r *OutputStdout) Main(cfg *Configure) int {
+    fmt.Println("output main")
+    return Ok
+}
+
+func (r *OutputStdout) Exit() int {
+    fmt.Println("output exit")
+    return Ok
+}
+
+func (r *OutputStdout) Type() *Module {
+    return r.Self()
 }
 
 func init() {
-    Modules = Load(Modules, &outputStdoutModule)
+    Modulers = Load(Modulers, outputStdoutModule)
 }

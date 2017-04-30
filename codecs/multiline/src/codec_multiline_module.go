@@ -1,55 +1,127 @@
-/*
- * Copyright (C) 2017 Meng Shi
- */
-
 package multiline
 
 import (
       "unsafe"
-    . "github.com/rookie-xy/worker/types"
-    . "github.com/rookie-xy/worker/modules"
+      "fmt"
+    . "github.com/rookie-xy/main/types"
 )
 
-const (
-    MULTILINE_MODULE = CODEC_MODULE|0x01000000
-    MULTILINE_CONFIG = USER_CONFIG|CONFIG_MAP
-)
+type CodecMultiline struct {
+    *Module
 
-var multilineModule = String{ len("multiline_module"), "multiline_module" }
-var codecMultilineContext = &Context{
-    multilineModule,
-    nil,
-    nil,
+     match     string
+     previous  string
+     next      string
 }
 
-var	multiline = String{ len("multiline"), "multiline" }
+func NewCodecMultiline() *CodecMultiline {
+    return &CodecMultiline{}
+}
+
+type CodecMultilineContext struct {
+    *Context
+}
+
+var multilineCodec = String{ len("multiline_codec"), "multiline_codec" }
+var codecMultilineContext = &CodecMultilineContext{
+    Context: &Context{
+        Name: multilineCodec,
+    },
+}
+
+func (r *CodecMultilineContext) Create() unsafe.Pointer {
+    multiline := NewCodecMultiline()
+    if multiline == nil {
+        return nil
+    }
+
+    multiline.match = "abc"
+    multiline.previous = "a"
+    multiline.next = "c"
+
+    return unsafe.Pointer(multiline)
+}
+
+func (r *CodecMultilineContext) Contexts() *Context {
+    return r.Get()
+}
+
+var (
+    match    = String{ len("match"), "match" }
+    previous = String{ len("previous"), "previous" }
+    next     = String{ len("next"), "next" }
+    codecMultiline  CodecMultiline
+)
+
 var codecMultilineCommands = []Command{
 
-    { multiline,
-      MULTILINE_CONFIG,
-      multilineBlock,
+    { match,
+      MULTILINE_CONFIG|CONFIG_VALUE,
+      SetString,
       0,
+      unsafe.Offsetof(codecMultiline.match),
+      nil },
+
+    { previous,
+      MULTILINE_CONFIG|CONFIG_VALUE,
+      SetString,
       0,
+      unsafe.Offsetof(codecMultiline.previous),
+      nil },
+
+    { next,
+      MULTILINE_CONFIG|CONFIG_VALUE,
+      SetString,
+      0,
+      unsafe.Offsetof(codecMultiline.next),
       nil },
 
     NilCommand,
 }
 
-func multilineBlock(cycle *Cycle, _ *Command, _ *unsafe.Pointer) int {
-    cycle.Configure.Block(MULTILINE_MODULE, MULTILINE_CONFIG|CONFIG_VALUE)
+var codecMultilineModule = &CodecMultiline{
+    Module: &Module{
+        MODULE_V1,
+        CONTEXT_V1,
+        codecMultilineContext,
+        codecMultilineCommands,
+        MULTILINE_MODULE,
+    },
+}
+
+func (r *CodecMultiline) Init(o *Option) int {
+    context := r.Context.Contexts()
+
+    for _, v := range context.Data {
+        if v != nil {
+            this := (*CodecMultiline)(unsafe.Pointer(uintptr(*v)))
+            if this == nil {
+                return Error
+            }
+
+            fmt.Println(this.match, this.previous, this.next)
+        } else {
+            break
+        }
+    }
+
     return Ok
 }
 
-var codecMultilineModule = Module{
-    MODULE_V1,
-    CONTEXT_V1,
-    unsafe.Pointer(codecMultilineContext),
-    codecMultilineCommands,
-    CODEC_MODULE,
-    nil,
-    nil,
+func (r *CodecMultiline) Main(cfg *Configure) int {
+    fmt.Println("CodecMultiline main")
+    return Ok
+}
+
+func (r *CodecMultiline) Exit() int {
+    fmt.Println("CodecMultiline exit")
+    return Ok
+}
+
+func (r *CodecMultiline) Type() *Module {
+    return r.Self()
 }
 
 func init() {
-    Modules = Load(Modules, &codecMultilineModule)
+    Modulers = Load(Modulers, codecMultilineModule)
 }
