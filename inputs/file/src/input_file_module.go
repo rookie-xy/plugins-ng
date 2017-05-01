@@ -7,17 +7,18 @@ package file
 import (
       "unsafe"
     . "github.com/rookie-xy/main/types"
+    //. "github.com/rookie-xy/main/modules"
 "fmt"
 )
 
 type InputFile struct {
     *Module
 
-     host     string
-     group    string
-     types    string
-     dir      string
-     pattern  string
+     host    string
+     group   string
+     types   string
+     dir     string
+     suffix  string
 }
 
 func NewInputFile() *InputFile {
@@ -45,7 +46,7 @@ func (r *InputFileContext) Create() unsafe.Pointer {
     file.group = "example"
     file.types = "de"
     file.dir = "/data/logs/"
-    file.pattern = "file.log"
+    file.suffix = "file.log"
 
     return unsafe.Pointer(file)
 }
@@ -55,11 +56,11 @@ func (r *InputFileContext) Contexts() *Context {
 }
 
 var (
-    host    = String{ len("host"), "host" }
-    group   = String{ len("group"), "group" }
-    types   = String{ len("type"), "type" }
-    dir     = String{ len("dir"), "dir" }
-    pattern = String{ len("pattern"), "pattern" }
+    host   = String{ len("host"), "host" }
+    group  = String{ len("group"), "group" }
+    types  = String{ len("type"), "type" }
+    dir    = String{ len("dir"), "dir" }
+    suffix = String{ len("suffix"), "suffix" }
 
     inputFile InputFile
 )
@@ -94,11 +95,11 @@ var inputFileCommands = []Command{
       unsafe.Offsetof(inputFile.dir),
       nil },
 
-    { pattern,
+    { suffix,
       FILE_CONFIG|CONFIG_VALUE,
       SetString,
       0,
-      unsafe.Offsetof(inputFile.pattern),
+      unsafe.Offsetof(inputFile.suffix),
       nil },
 
     NilCommand,
@@ -114,7 +115,7 @@ func (r *InputFile) Init(o *Option) int {
                 return Error
             }
 
-            fmt.Println(this.types, this.pattern, this.group, this.dir, this.host)
+            fmt.Println(this.types, this.suffix, this.group, this.dir, this.host)
         } else {
             break
         }
