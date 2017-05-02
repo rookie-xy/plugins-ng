@@ -3,7 +3,7 @@
  */
 
 package multiline
-
+/*
 import (
       "unsafe"
     . "github.com/rookie-xy/main/types"
@@ -76,3 +76,4 @@ var multilineModule = &Multiline{
 func init() {
     Modulers = Load(Modulers, multilineModule)
 }
+*/

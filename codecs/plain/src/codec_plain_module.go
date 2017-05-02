@@ -2,15 +2,9 @@
  * Copyright (C) 2017 Meng Shi
  */
 
-package modules
+package plain
 
-import (
-      "unsafe"
-      "fmt"
-    . "github.com/rookie-xy/main/types"
-    . "github.com/rookie-xy/main/modules"
-)
-
+/*
 type CodecPlain struct {
     *Module
      plain  string
@@ -111,3 +105,4 @@ var codecPlainModule = &CodecPlain{
 func init() {
     Modulers = Load(Modulers, codecPlainModule)
 }
+*/

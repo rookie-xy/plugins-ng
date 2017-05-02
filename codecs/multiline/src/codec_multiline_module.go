@@ -1,11 +1,6 @@
 package multiline
 
-import (
-      "unsafe"
-      "fmt"
-    . "github.com/rookie-xy/main/types"
-)
-
+/*
 type CodecMultiline struct {
     *Module
 
@@ -125,3 +120,4 @@ func (r *CodecMultiline) Type() *Module {
 func init() {
     Modulers = Load(Modulers, codecMultilineModule)
 }
+*/

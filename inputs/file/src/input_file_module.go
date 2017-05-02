@@ -14,11 +14,13 @@ import (
 type InputFile struct {
     *Module
 
-     host    string
-     group   string
-     types   string
-     dir     string
-     suffix  string
+     host   string
+     group  string
+     types  string
+     path   string
+     name   Array
+
+     codec  Code
 }
 
 func NewInputFile() *InputFile {
@@ -45,8 +47,8 @@ func (r *InputFileContext) Create() unsafe.Pointer {
     file.host = "127.0.0.1"
     file.group = "example"
     file.types = "de"
-    file.dir = "/data/logs/"
-    file.suffix = "file.log"
+    file.path = "/data/logs/"
+    //file.name = Array{}
 
     return unsafe.Pointer(file)
 }
@@ -56,11 +58,12 @@ func (r *InputFileContext) Contexts() *Context {
 }
 
 var (
-    host   = String{ len("host"), "host" }
-    group  = String{ len("group"), "group" }
-    types  = String{ len("type"), "type" }
-    dir    = String{ len("dir"), "dir" }
-    suffix = String{ len("suffix"), "suffix" }
+    host  = String{ len("host"), "host" }
+    group = String{ len("group"), "group" }
+    types = String{ len("type"), "type" }
+    path  = String{ len("path"), "path" }
+    name  = String{ len("name"), "name" }
+    codec = String{ len("codec"), "codec" }
 
     inputFile InputFile
 )
@@ -88,18 +91,25 @@ var inputFileCommands = []Command{
       unsafe.Offsetof(inputFile.types),
       nil },
 
-    { dir,
+    { path,
       FILE_CONFIG|CONFIG_VALUE,
       SetString,
       0,
-      unsafe.Offsetof(inputFile.dir),
+      unsafe.Offsetof(inputFile.path),
       nil },
 
-    { suffix,
-      FILE_CONFIG|CONFIG_VALUE,
-      SetString,
+    { name,
+      FILE_CONFIG|CONFIG_ARRAY,
+      SetArray,
       0,
-      unsafe.Offsetof(inputFile.suffix),
+      unsafe.Offsetof(inputFile.name),
+      nil },
+
+    { codec,
+      FILE_CONFIG|CONFIG_BLOCK,
+      SetCodec,
+      0,
+      unsafe.Offsetof(inputFile.codec),
       nil },
 
     NilCommand,
@@ -115,7 +125,14 @@ func (r *InputFile) Init(o *Option) int {
                 return Error
             }
 
-            fmt.Println(this.types, this.suffix, this.group, this.dir, this.host)
+            fmt.Println(this.types, this.group, this.path, this.host)
+
+            for i := 0; i < this.name.GetLength(); i++ {
+                fmt.Println(this.name.GetData(i))
+            }
+
+            this.codec.Encode()
+
         } else {
             break
         }

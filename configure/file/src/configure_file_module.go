@@ -175,7 +175,6 @@ func (fc *FileConfigure) Main(configure *Configure) int {
 
         case event := <-fc.watcher.Events:
             if event.Op & fsnotify.Write == fsnotify.Write {
-                fmt.Println("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm")
                 notice.SetOpcode(RELOAD)
                 notice.SetName("reload")
                 configure.Event <- notice
