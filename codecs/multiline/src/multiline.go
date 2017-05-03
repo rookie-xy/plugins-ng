@@ -25,13 +25,24 @@ var multiline = &Multiline{
     next: "where",
 }
 
+func (r *Multiline) New() Codec {
+    multiline := NewMultiline()
+
+    multiline.name = "new_multiline"
+    multiline.match = r.match
+    multiline.previous = r.previous
+    multiline.next = r.next
+
+    return multiline
+}
+
 func (r *Multiline) Init(configure interface{}) int {
     //fmt.Println(configure)
     return Ok
 }
 
 func (r *Multiline) Encode() int {
-    fmt.Println("multiline")
+    fmt.Println(r.name)
     return Ok
 }
 

@@ -21,13 +21,21 @@ var plain = &Plain{
     name: "plain",
 }
 
+func (r *Plain) New() Codec {
+    plain := NewPlain()
+
+    plain.name = "new_plain"
+
+    return plain
+}
+
 func (r *Plain) Init(configure interface{}) int {
     //fmt.Println(configure)
     return Ok
 }
 
 func (r *Plain) Encode() int {
-    fmt.Println("plain")
+    fmt.Printf("name: %s, name: %s, plain: %X\n", r.name, &r.name, &r)
     return Ok
 }
 

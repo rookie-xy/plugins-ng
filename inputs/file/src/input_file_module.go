@@ -131,8 +131,8 @@ func (r *InputFile) Init(o *Option) int {
                 fmt.Println(this.name.GetData(i))
             }
 
-            this.codec.Encode()
-
+            codec := this.codec.New()
+            codec.Encode()
         } else {
             break
         }
