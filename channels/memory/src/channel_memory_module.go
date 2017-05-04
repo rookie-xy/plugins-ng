@@ -22,14 +22,13 @@ func NewChannelMemory() *ChannelMemory {
 }
 
 type ChannelMemoryContext struct {
-    *Context
+    Name   String
+    Data   [16]*unsafe.Pointer
 }
 
 var memoryChannel = String{ len("memory_channel"), "memory_channel" }
 var channelMemoryContext = &ChannelMemoryContext{
-    Context: &Context{
-        Name: memoryChannel,
-    },
+    Name: memoryChannel,
 }
 
 func (r *ChannelMemoryContext) Create() unsafe.Pointer {
@@ -44,8 +43,8 @@ func (r *ChannelMemoryContext) Create() unsafe.Pointer {
     return unsafe.Pointer(memory)
 }
 
-func (r *ChannelMemoryContext) Contexts() *Context {
-    return r.Get()
+func (r *ChannelMemoryContext) GetDatas() []*unsafe.Pointer {
+    return r.Data[:]
 }
 
 var (
@@ -84,9 +83,9 @@ var channelMemoryModule = &ChannelMemory{
 }
 
 func (r *ChannelMemory) Init(o *Option) int {
-    context := r.Context.Contexts()
+    context := r.Context.GetDatas()
 
-    for _, v := range context.Data {
+    for _, v := range context {
         if v != nil {
             this := (*ChannelMemory)(unsafe.Pointer(uintptr(*v)))
             if this == nil {

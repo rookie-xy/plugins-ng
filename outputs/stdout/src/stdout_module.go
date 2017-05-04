@@ -63,6 +63,7 @@ func stdoutBlock(c *Configure, _ *Command, _ *unsafe.Pointer) int {
     return Ok
 }
 
+/*
 var stdoutModule = &Stdout{
     Module: &Module{
         MODULE_V1,
@@ -72,7 +73,16 @@ var stdoutModule = &Stdout{
         OUTPUT_MODULE,
     },
 }
+*/
+
+var stdoutModule = &Module{
+    MODULE_V1,
+    CONTEXT_V1,
+    nil,
+    stdoutCommands,
+    OUTPUT_MODULE,
+}
 
 func init() {
-    Modulers = Load(Modulers, stdoutModule)
+    Modulers = Load(Modulers, &Stdout{stdoutModule})
 }

@@ -28,14 +28,13 @@ func NewInputFile() *InputFile {
 }
 
 type InputFileContext struct {
-    *Context
+    Name   String
+    Data   [32]*unsafe.Pointer
 }
 
 var fileInput = String{ len("file_input"), "file_input" }
 var inputFileContext = &InputFileContext{
-    Context: &Context{
-        Name: fileInput,
-    },
+    Name: fileInput,
 }
 
 func (r *InputFileContext) Create() unsafe.Pointer {
@@ -53,8 +52,8 @@ func (r *InputFileContext) Create() unsafe.Pointer {
     return unsafe.Pointer(file)
 }
 
-func (r *InputFileContext) Contexts() *Context {
-    return r.Get()
+func (r *InputFileContext) GetDatas() []*unsafe.Pointer {
+    return r.Data[:]
 }
 
 var (
@@ -116,9 +115,9 @@ var inputFileCommands = []Command{
 }
 
 func (r *InputFile) Init(o *Option) int {
-    context := r.Context.Contexts()
+    context := r.Context.GetDatas()
 
-    for _, v := range context.Data {
+    for _, v := range context {
         if v != nil {
             this := (*InputFile)(unsafe.Pointer(uintptr(*v)))
             if this == nil {
@@ -132,7 +131,7 @@ func (r *InputFile) Init(o *Option) int {
             }
 
             codec := this.codec.New()
-            codec.Encode()
+            codec.Encode(nil)
         } else {
             break
         }

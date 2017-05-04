@@ -64,7 +64,27 @@ func (r *SimpleOption) Init(o *Option) int {
         }
     }
 
-    o.Configure = NewConfigure(o.Log)
+    configure := NewConfigure(o.Log)
+
+    if item := o.GetItem("format"); item != nil {
+        name := item.(string)
+
+        for _, codec := range Codecs {
+            if codec.Type(name) == Ignore {
+                continue
+            }
+
+            codec.Init(nil)
+
+            code := NewCode(codec)
+            //code.SetName(item.(string))
+            configure.Code = &code
+        }
+    } else {
+        return Error
+    }
+
+    o.Configure = configure
 
     return Ok
 }

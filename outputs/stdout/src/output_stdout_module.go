@@ -22,14 +22,13 @@ func NewOutputStdout() *OutputStdout {
 }
 
 type OutputStdoutContext struct {
-    *Context
+    Name   String
+    Data   [32]*unsafe.Pointer
 }
 
 var stdoutOutput = String{ len("stdout_output"), "stdout_output" }
 var outputStdoutContext = &OutputStdoutContext{
-    Context: &Context{
-        Name: stdoutOutput,
-    },
+    Name: stdoutOutput,
 }
 
 func (r *OutputStdoutContext) Create() unsafe.Pointer {
@@ -44,8 +43,8 @@ func (r *OutputStdoutContext) Create() unsafe.Pointer {
     return unsafe.Pointer(stdout)
 }
 
-func (r *OutputStdoutContext) Contexts() *Context {
-    return r.Get()
+func (r *OutputStdoutContext) GetDatas() []*unsafe.Pointer {
+    return r.Data[:]
 }
 
 var (
@@ -84,9 +83,9 @@ var outputStdoutModule = &OutputStdout{
 }
 
 func (r *OutputStdout) Init(o *Option) int {
-    context := r.Context.Contexts()
+    context := r.Context.GetDatas()
 
-    for _, v := range context.Data {
+    for _, v := range context {
         if v != nil {
             this := (*OutputStdout)(unsafe.Pointer(uintptr(*v)))
             if this == nil {

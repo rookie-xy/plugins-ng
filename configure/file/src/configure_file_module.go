@@ -9,7 +9,6 @@ import (
 
     . "github.com/rookie-xy/main/types"
 
-    "unsafe"
     "log"
     "fmt"
 )
@@ -211,34 +210,11 @@ func (fc *FileConfigure) Type() *Module {
     return fc.Self()
 }
 
-type FileConfigureCtx struct {
-    *Context
-}
-
-var fileConfig = String{ len("file_configure"), "file_configure" }
-var fileConfigureCtx = &FileConfigureCtx{
-    Context: &Context{
-        Name: fileConfig,
-    },
-}
-
-func (fcc *FileConfigureCtx) Create() unsafe.Pointer {
-    return nil
-}
-
-func (fcc *FileConfigureCtx) Insert(p *unsafe.Pointer) int {
-    return Ok
-}
-
-func (fcc *FileConfigureCtx) Contexts() *Context {
-    return fcc.Get()
-}
-
 var FileConfigureModule = &FileConfigure{
     Module: &Module{
         MODULE_V1,
         CONTEXT_V1,
-        fileConfigureCtx,
+        nil,
         nil,
         SYSTEM_MODULE,
     },

@@ -41,13 +41,13 @@ func (r *Multiline) Init(configure interface{}) int {
     return Ok
 }
 
-func (r *Multiline) Encode() int {
+func (r *Multiline) Encode(in interface{}) (interface{}, error) {
     fmt.Println(r.name)
-    return Ok
+    return nil, nil
 }
 
-func (r *Multiline) Decode() int {
-    return Ok
+func (r *Multiline) Decode(in []byte) (interface{}, error) {
+    return nil, nil
 }
 
 func (r *Multiline) Type(name string) int {
