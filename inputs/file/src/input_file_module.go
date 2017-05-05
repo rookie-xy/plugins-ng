@@ -154,16 +154,14 @@ func (r *InputFile) Type() *Module {
     return r.Self()
 }
 
-var inputFileModule = &InputFile{
-    Module: &Module{
-        MODULE_V1,
-        CONTEXT_V1,
-        inputFileContext,
-        inputFileCommands,
-        FILE_MODULE,
-    },
+var inputFileModule = &Module{
+    MODULE_V1,
+    CONTEXT_V1,
+    inputFileContext,
+    inputFileCommands,
+    FILE_MODULE,
 }
 
 func init() {
-    Modulers = Load(Modulers, inputFileModule)
+    Modulers = Load(Modulers, &InputFile{Module:inputFileModule})
 }

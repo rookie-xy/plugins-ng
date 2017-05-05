@@ -72,16 +72,6 @@ var outputStdoutCommands = []Command{
     NilCommand,
 }
 
-var outputStdoutModule = &OutputStdout{
-    Module: &Module{
-        MODULE_V1,
-        CONTEXT_V1,
-        outputStdoutContext,
-        outputStdoutCommands,
-        STDOUT_MODULE,
-    },
-}
-
 func (r *OutputStdout) Init(o *Option) int {
     context := r.Context.GetDatas()
 
@@ -111,10 +101,14 @@ func (r *OutputStdout) Exit() int {
     return Ok
 }
 
-func (r *OutputStdout) Type() *Module {
-    return r.Self()
+var outputStdoutModule = &Module{
+    MODULE_V1,
+    CONTEXT_V1,
+    outputStdoutContext,
+    outputStdoutCommands,
+    STDOUT_MODULE,
 }
 
 func init() {
-    Modulers = Load(Modulers, outputStdoutModule)
+    Modulers = Load(Modulers, &OutputStdout{Module:outputStdoutModule})
 }

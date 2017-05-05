@@ -7,8 +7,6 @@ package stdout
 import (
       "unsafe"
     . "github.com/rookie-xy/main/types"
-    . "github.com/rookie-xy/main/modules"
-"fmt"
 )
 
 const (
@@ -19,7 +17,7 @@ const (
 type Stdout struct{
     *Module
 }
-
+/*
 func (r *Stdout) Init(o *Option) int {
     fmt.Println("stdout init")
     return Ok
@@ -34,10 +32,7 @@ func (r *Stdout) Exit() int {
     fmt.Println("stdout exit")
     return Ok
 }
-
-func (r *Stdout) Type() *Module {
-    return r.Self()
-}
+*/
 
 var stdout = String{ len("stdout"), "stdout" }
 var stdoutCommands = []Command{
@@ -62,18 +57,6 @@ func stdoutBlock(c *Configure, _ *Command, _ *unsafe.Pointer) int {
 
     return Ok
 }
-
-/*
-var stdoutModule = &Stdout{
-    Module: &Module{
-        MODULE_V1,
-        CONTEXT_V1,
-        nil,
-        stdoutCommands,
-        OUTPUT_MODULE,
-    },
-}
-*/
 
 var stdoutModule = &Module{
     MODULE_V1,
