@@ -1,1 +1,1 @@
-# multiline module
+# multiline plugin

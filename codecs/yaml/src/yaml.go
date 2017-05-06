@@ -6,7 +6,7 @@ package yaml
 
 import (
     yml "gopkg.in/yaml.v2"
-    .   "github.com/rookie-xy/main/types"
+    .   "github.com/rookie-xy/worker/types"
 )
 
 type Yaml struct {

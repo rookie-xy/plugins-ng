@@ -1,1 +1,1 @@
-# grok module
+# grok plugin

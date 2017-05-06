@@ -1,1 +1,1 @@
-# plain module
+# plain plugin

@@ -1,1 +1,1 @@
-# codecs modules
+# codecs plugins

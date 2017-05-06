@@ -1,1 +1,1 @@
-# worker modules
+# worker plugins

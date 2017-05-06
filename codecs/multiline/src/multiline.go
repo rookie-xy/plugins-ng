@@ -1,7 +1,7 @@
 package multiline
 
 import (
-    . "github.com/rookie-xy/main/types"
+    . "github.com/rookie-xy/worker/types"
     "fmt"
 )
 
