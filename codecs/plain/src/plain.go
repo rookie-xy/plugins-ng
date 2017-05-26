@@ -52,5 +52,5 @@ func (r *Plain) Type(name string) int {
 }
 
 func init() {
-    Codecs = Setup(Codecs, plain)
+    Codecs = append(Codecs, plain)
 }

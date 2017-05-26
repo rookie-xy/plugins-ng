@@ -59,5 +59,5 @@ func (r *Multiline) Type(name string) int {
 }
 
 func init() {
-    Codecs = Setup(Codecs, multiline)
+    Codecs = append(Codecs, multiline)
 }

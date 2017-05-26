@@ -61,5 +61,5 @@ func (r *Yaml) Type(name string) int {
 }
 
 func init() {
-    Codecs = Setup(Codecs, yaml)
+    Codecs = append(Codecs, yaml)
 }

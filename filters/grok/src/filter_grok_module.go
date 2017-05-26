@@ -12,7 +12,7 @@ import (
 )
 
 const (
-    GROK_MODULE = FILTER_MODULE|0x01000000
+    GROK_MODULE = CHANNEL_MODULE|MAIN_MODULE
     GROK_CONFIG = USER_CONFIG|CONFIG_ARRAY
 )
 
@@ -24,7 +24,7 @@ var filterGrokContext = &Context{
 }
 
 var	grok = String{ len("grok"), "grok" }
-var filterGrokCommands = []Command{
+var filterGrokCommands = []Command_t{
 
     { grok,
       GROK_CONFIG,
@@ -36,19 +36,23 @@ var filterGrokCommands = []Command{
     NilCommand,
 }
 
-func grokBlock(cycle *Cycle, _ *Command, _ *unsafe.Pointer) int {
-    cycle.Configure.Block(GROK_MODULE, GROK_CONFIG|CONFIG_VALUE)
+func grokBlock(c *Configure_t, _ *Command_t, _ *unsafe.Pointer) int {
+    if nil == c {
+        return Error
+    }
+
+    flag := GROK_CONFIG|CONFIG_VALUE
+    Block(c, Modules, GROK_MODULE, flag)
+
     return Ok
 }
 
 var filterGrokModule = Module{
     MODULE_V1,
     CONTEXT_V1,
-    unsafe.Pointer(filterGrokContext),
+    nil,
     filterGrokCommands,
-    FILTER_MODULE,
-    nil,
-    nil,
+    CHANNEL_MODULE,
 }
 
 func init() {
